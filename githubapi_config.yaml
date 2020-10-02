@@ -1,0 +1,4 @@
+log_file:
+  /home/cuprumtan/Desktop/git/github_API_test/githubapi.log
+cred_file:
+  /home/cuprumtan/Desktop/git/github_API_test/creds
