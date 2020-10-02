@@ -6,10 +6,19 @@ def create_github_instance(username, password):
     return github_instance
 
 
+def count_all_user_repositories(github_instance, private=False, languages=False):
+    github_repositories = github_instance.search_repositories(query='user:' + github_instance.get_user().login)
+    print('===== USER '
+          + github_instance.get_user().login
+          + ', TOTAL'
+          + ', ' + str(github_repositories.totalCount))
+
+
 def get_all_user_repositories(github_instance, private=False, languages=False):
     github_repositories = github_instance.search_repositories(query='user:' + github_instance.get_user().login)
-    print('===== USER ' + github_instance.get_user().login + ' REPOSITORIES:')
-    print('===== total ' + str(github_repositories.totalCount))
+    print('===== USER '
+          + github_instance.get_user().login
+          + ' REPOSITORIES:')
     github_repositories_dict = dict((repo.name, ('PRIVATE' if repo.private else 'PUBLIC', repo.language))
                                     for repo in github_repositories)
     if private and languages:

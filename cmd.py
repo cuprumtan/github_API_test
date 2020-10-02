@@ -16,10 +16,18 @@ fernet = Fernet(permanent_key)
 @click.command()
 @click.option('-U', '--username', required=False, help='GitHub username')
 @click.option('-P', '--password', required=False, help='GitHub password')
-def main(username, password):
+# repo level
+# get_all_user_repositories
+@click.option('-r', '--repolist', required=False, is_flag=True, help='Show current user repositories')
+@click.option('--privacy', required=False, is_flag=True, help='Show repositories privacy')
+@click.option('--languages', required=False, is_flag=True, help='Show repositories languages')
+def main(username, password, repolist, privacy, languages):
     params_dict = {
         'username': username,
-        'password': password
+        'password': password,
+        'repolist': repolist,
+        'privacy': privacy,
+        'languages': languages
     }
 
     # check credentials file. Use creds from it if exists, else exit
@@ -37,7 +45,7 @@ def main(username, password):
     # first action before authorization - read all user repos
     try:
         instance = githubapi.create_github_instance(params_dict['username'], params_dict['password'])
-        githubapi.get_all_user_repositories(instance)
+        githubapi.count_all_user_repositories(instance)
         log_file = open(config.get('log_file'), 'a')
         log_file.write(str(datetime.datetime.now())
                        + ' | Successfully authorized as '
@@ -52,7 +60,9 @@ def main(username, password):
         cred_file.close()
 
         # optional operations
-
+        if params_dict['repolist']:
+            print()
+            githubapi.get_all_user_repositories(instance, params_dict['privacy'], params_dict['languages'])
 
     except GithubException:
         log_file = open(config.get('log_file'), 'a')
