@@ -44,6 +44,8 @@ fernet = Fernet(permanent_key)
 # create_new_repo_file_from_file
 @click.option('-l', '--loadfile', required=False, help='Load new file in repository')
 @click.option('--path', required=False, help='File path')
+# delete_file_from_repo
+@click.option('-d', '--deletefile', required=False, help='Delete file from repository')
 def main(username,
          password,
          repolist,
@@ -60,7 +62,8 @@ def main(username,
          createfile,
          content,
          loadfile,
-         path):
+         path,
+         deletefile):
     params_dict = {
         'username': username,
         'password': password,
@@ -78,7 +81,8 @@ def main(username,
         'createfile': createfile,
         'content': content,
         'loadfile': loadfile,
-        'path': path
+        'path': path,
+        'deletefile': deletefile
     }
 
     # check credentials file. Use creds from it if exists, else exit
@@ -174,6 +178,16 @@ def main(username,
             print('Successfully loaded file '
                   + params_dict['loadfile']
                   + ' in repo '
+                  + params_dict['repo']
+                  + '\n')
+        if params_dict['repo'] and params_dict['deletefile']:
+            print()
+            githubapi.delete_file_from_repo(instance,
+                                            params_dict['repo'],
+                                            params_dict['deletefile'])
+            print('Successfully deleted file '
+                  + params_dict['deletefile']
+                  + ' from repo '
                   + params_dict['repo']
                   + '\n')
 
