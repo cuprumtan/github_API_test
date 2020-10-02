@@ -36,6 +36,14 @@ fernet = Fernet(permanent_key)
                                                           + 'T for private, F for public.')
 #get_repository_files_by_type
 @click.option('-F', '--findinrepo', required=False, help='Find files in repo by type. Usage: -F REPO,TYPE.')
+# files level
+@click.option('--repo', required=False, help='Repository name')
+# create_new_repo_file_from_cmd
+@click.option('-c', '--createfile', required=False, help='Create new file in repository')
+@click.option('--content', required=False, help='File content. Usage: --content "WRITE CONTENT HERE"')
+# create_new_repo_file_from_file
+@click.option('-l', '--loadfile', required=False, help='Load new file in repository')
+@click.option('--path', required=False, help='File path')
 def main(username,
          password,
          repolist,
@@ -47,7 +55,12 @@ def main(username,
          recursively,
          renamerepo,
          repoprivacy,
-         findinrepo):
+         findinrepo,
+         repo,
+         createfile,
+         content,
+         loadfile,
+         path):
     params_dict = {
         'username': username,
         'password': password,
@@ -60,7 +73,12 @@ def main(username,
         'recursively': recursively,
         'renamerepo': renamerepo,
         'repoprivacy': repoprivacy,
-        'findinrepo': findinrepo
+        'findinrepo': findinrepo,
+        'repo': repo,
+        'createfile': createfile,
+        'content': content,
+        'loadfile': loadfile,
+        'path': path
     }
 
     # check credentials file. Use creds from it if exists, else exit
@@ -136,6 +154,28 @@ def main(username,
             githubapi.get_repository_files_by_type(instance,
                                                    params_dict['findinrepo'].split(',')[0],
                                                    params_dict['findinrepo'].split(',')[1])
+        if params_dict['repo'] and params_dict['createfile']:
+            print()
+            githubapi.create_new_repo_file_from_cmd(instance,
+                                                    params_dict['repo'],
+                                                    params_dict['createfile'],
+                                                    params_dict['content'])
+            print('Successfully create file '
+                  + params_dict['createfile']
+                  + ' in repo '
+                  + params_dict['repo']
+                  + '\n')
+        if params_dict['repo'] and params_dict['loadfile']:
+            print()
+            githubapi.create_new_repo_file_from_file(instance,
+                                                     params_dict['repo'],
+                                                     params_dict['loadfile'],
+                                                     params_dict['path'])
+            print('Successfully loaded file '
+                  + params_dict['loadfile']
+                  + ' in repo '
+                  + params_dict['repo']
+                  + '\n')
 
     except GithubException:
         log_file = open(config.get('log_file'), 'a')
