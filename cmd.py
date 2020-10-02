@@ -34,6 +34,8 @@ fernet = Fernet(permanent_key)
 @click.option('-P', '--repoprivacy', required=False, help='Edit repository privacy. '
                                                           + 'Usage: -P REPO,PRIVACY where PRIVACY = [T|F]. '
                                                           + 'T for private, F for public.')
+#get_repository_files_by_type
+@click.option('-F', '--findinrepo', required=False, help='Find files in repo by type. Usage: -F REPO,TYPE.')
 def main(username,
          password,
          repolist,
@@ -44,7 +46,8 @@ def main(username,
          repocontents,
          recursively,
          renamerepo,
-         repoprivacy):
+         repoprivacy,
+         findinrepo):
     params_dict = {
         'username': username,
         'password': password,
@@ -56,7 +59,8 @@ def main(username,
         'repocontents': repocontents,
         'recursively': recursively,
         'renamerepo': renamerepo,
-        'repoprivacy': repoprivacy
+        'repoprivacy': repoprivacy,
+        'findinrepo': findinrepo
     }
 
     # check credentials file. Use creds from it if exists, else exit
@@ -127,6 +131,11 @@ def main(username,
                   + ' '
                   + 'private' if params_dict['repoprivacy'].split(',')[1] == 'T' else 'public'
                   + '\n')
+        if params_dict['findinrepo']:
+            print()
+            githubapi.get_repository_files_by_type(instance,
+                                                   params_dict['findinrepo'].split(',')[0],
+                                                   params_dict['findinrepo'].split(',')[1])
 
     except GithubException:
         log_file = open(config.get('log_file'), 'a')
