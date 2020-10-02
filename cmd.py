@@ -33,9 +33,9 @@ fernet = Fernet(permanent_key)
 # edit_repository_privacy
 @click.option('-P', '--repoprivacy', required=False, help='Edit repository privacy. '
                                                           + 'Usage: -P REPO,PRIVACY where PRIVACY = [T|F]. '
-                                                          + 'T for private, F for public.')
+                                                          + 'T for private, F for public')
 #get_repository_files_by_type
-@click.option('-F', '--findinrepo', required=False, help='Find files in repo by type. Usage: -F REPO,TYPE.')
+@click.option('-F', '--findinrepo', required=False, help='Find files in repo by type. Usage: -F REPO,TYPE')
 # files level
 @click.option('--repo', required=False, help='Repository name')
 # create_new_repo_file_from_cmd

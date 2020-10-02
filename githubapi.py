@@ -132,12 +132,3 @@ def delete_file_from_repo(github_instance, github_repository_name, file_path):
     github_repository.delete_file(path=file_path,
                                   message='Delete file ' + file_path,
                                   sha=file_contents.sha)
-
-
-def rename_repo_file(github_instance, github_repository_name, file_path, new_file_path):
-    github_repository = github_instance.get_repo(
-        full_name_or_id=github_instance.get_user().login + '/' + github_repository_name)
-    file_contents = github_repository.get_contents(file_path)
-    github_repository.update_file(path=file_path,
-                                  message='Rename file ' + file_path + ' to ' + new_file_path,
-                                  sha=file_contents.sha)
