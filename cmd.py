@@ -14,8 +14,8 @@ fernet = Fernet(permanent_key)
 
 
 @click.command()
-@click.option('-U', '--username', required=False, help='GitHub username')
-@click.option('-P', '--password', required=False, help='GitHub password')
+@click.option('-u', '--username', required=False, help='GitHub username')
+@click.option('-p', '--password', required=False, help='GitHub password')
 # repo level
 # get_all_user_repositories
 @click.option('-L', '--repolist', required=False, is_flag=True, help='Show current user repositories')
@@ -116,80 +116,308 @@ def main(username,
 
         # optional operations
         if params_dict['repolist']:
-            print()
-            githubapi.get_all_user_repositories(instance, params_dict['privacy'], params_dict['languages'])
+            try:
+                print()
+                githubapi.get_all_user_repositories(instance, params_dict['privacy'], params_dict['languages'])
+                log_file = open(config.get('log_file'), 'a')
+                log_file.write(str(datetime.datetime.now())
+                               + ' | Loaded all repositories for user '
+                               + params_dict['username']
+                               + (' recursively' if params_dict['privacy'] else ' ')
+                               + (' with languages' if params_dict['languages'] else ' ')
+                               + '\n')
+                log_file.close()
+            except GithubException:
+                print('ERROR')
+                log_file = open(config.get('log_file'), 'a')
+                log_file.write(str(datetime.datetime.now())
+                               + ' | Error while loading all repositories for user '
+                               + params_dict['username']
+                               + (' recursively' if params_dict['privacy'] else ' ')
+                               + (' with languages' if params_dict['languages'] else ' ')
+                               + '\n')
+                log_file.close()
+                exit(11)
         if params_dict['createrepo']:
-            print()
-            githubapi.create_new_github_repository(instance, params_dict['createrepo'])
-            print('Successfully created new repo '
-                  + params_dict['createrepo']
-                  + '\n')
+            try:
+                print()
+                githubapi.create_new_github_repository(instance, params_dict['createrepo'])
+                print('Successfully created new repo '
+                      + params_dict['createrepo']
+                      + '\n')
+                log_file = open(config.get('log_file'), 'a')
+                log_file.write(str(datetime.datetime.now())
+                               + ' | Created new repository '
+                               + params_dict['createrepo']
+                               + ' for user '
+                               + params_dict['username']
+                               + '\n')
+                log_file.close()
+            except GithubException:
+                print('ERROR')
+                log_file = open(config.get('log_file'), 'a')
+                log_file.write(str(datetime.datetime.now())
+                               + ' | Error while creating new repository '
+                               + params_dict['createrepo']
+                               + ' for user '
+                               + params_dict['username']
+                               + '\n')
+                log_file.close()
+                exit(11)
         if params_dict['deleterepo']:
-            print()
-            githubapi.delete_github_repository(instance, params_dict['deleterepo'])
-            print('Successfully deleted repo '
-                  + params_dict['deleterepo']
-                  + '\n')
+            try:
+                print()
+                githubapi.delete_github_repository(instance, params_dict['deleterepo'])
+                print('Successfully deleted repo '
+                      + params_dict['deleterepo']
+                      + '\n')
+                log_file = open(config.get('log_file'), 'a')
+                log_file.write(str(datetime.datetime.now())
+                               + ' | Deleted repository '
+                               + params_dict['deleterepo']
+                               + ' for user '
+                               + params_dict['username']
+                               + '\n')
+                log_file.close()
+            except GithubException:
+                print('ERROR')
+                log_file = open(config.get('log_file'), 'a')
+                log_file.write(str(datetime.datetime.now())
+                               + ' | Error while deleting repository '
+                               + params_dict['deleterepo']
+                               + ' for user '
+                               + params_dict['username']
+                               + '\n')
+                log_file.close()
+                exit(11)
         if params_dict['repocontents']:
-            print()
-            githubapi.get_repository_contents(instance, params_dict['repocontents'], params_dict['recursively'])
+            try:
+                print()
+                githubapi.get_repository_contents(instance, params_dict['repocontents'], params_dict['recursively'])
+                log_file = open(config.get('log_file'), 'a')
+                log_file.write(str(datetime.datetime.now())
+                               + ' | Loaded repository '
+                               + params_dict['repocontents']
+                               + ' contents '
+                               + ('recursively ' if params_dict['recursively'] else ' ')
+                               + ' for user '
+                               + params_dict['username']
+                               + '\n')
+                log_file.close()
+            except GithubException:
+                print('ERROR')
+                log_file = open(config.get('log_file'), 'a')
+                log_file.write(str(datetime.datetime.now())
+                               + ' | Error while loading repository '
+                               + params_dict['repocontents']
+                               + ' contents '
+                               + ('recursively ' if params_dict['recursively'] else ' ')
+                               + ' for user '
+                               + params_dict['username']
+                               + '\n')
+                log_file.close()
+                exit(11)
         if params_dict['renamerepo']:
-            print()
-            githubapi.edit_repository_name(instance,
-                                           params_dict['renamerepo'].split(',')[0],
-                                           params_dict['renamerepo'].split(',')[1])
-            print('Successfully renamed repo '
-                  + params_dict['renamerepo'].split(',')[0]
-                  + ' to '
-                  + params_dict['renamerepo'].split(',')[1]
-                  + '\n')
+            try:
+                print()
+                githubapi.edit_repository_name(instance,
+                                               params_dict['renamerepo'].split(',')[0],
+                                               params_dict['renamerepo'].split(',')[1])
+                print('Successfully renamed repo '
+                      + params_dict['renamerepo'].split(',')[0]
+                      + ' to '
+                      + params_dict['renamerepo'].split(',')[1]
+                      + '\n')
+                log_file = open(config.get('log_file'), 'a')
+                log_file.write(str(datetime.datetime.now())
+                               + ' | Renamed repository '
+                               + params_dict['renamerepo'].split(',')[0]
+                               + ' to '
+                               + params_dict['renamerepo'].split(',')[1]
+                               + ' for user '
+                               + params_dict['username']
+                               + '\n')
+                log_file.close()
+            except GithubException:
+                print('ERROR')
+                log_file = open(config.get('log_file'), 'a')
+                log_file.write(str(datetime.datetime.now())
+                               + ' | Error while renaming repository '
+                               + params_dict['renamerepo'].split(',')[0]
+                               + ' to '
+                               + params_dict['renamerepo'].split(',')[1]
+                               + ' for user '
+                               + params_dict['username']
+                               + '\n')
+                log_file.close()
+                exit(11)
         if params_dict['repoprivacy']:
-            print()
-            githubapi.edit_repository_privacy(instance,
-                                              params_dict['repoprivacy'].split(',')[0],
-                                              True if params_dict['repoprivacy'].split(',')[1] == 'T' else False)
-            print('Successfully made repo '
-                  + params_dict['repoprivacy'].split(',')[0]
-                  + ' '
-                  + 'private' if params_dict['repoprivacy'].split(',')[1] == 'T' else 'public'
-                  + '\n')
+            try:
+                print()
+                githubapi.edit_repository_privacy(instance,
+                                                  params_dict['repoprivacy'].split(',')[0],
+                                                  True if params_dict['repoprivacy'].split(',')[1] == 'T' else False)
+                print('Successfully made repo '
+                      + params_dict['repoprivacy'].split(',')[0]
+                      + ' '
+                      + ('private' if params_dict['repoprivacy'].split(',')[1] == 'T' else 'public')
+                      + '\n')
+                log_file = open(config.get('log_file'), 'a')
+                log_file.write(str(datetime.datetime.now())
+                               + ' | Setted repository '
+                               + params_dict['repoprivacy'].split(',')[0]
+                               + ' to '
+                               + ('private' if params_dict['repoprivacy'].split(',')[1] == 'T' else 'public')
+                               + ' for user '
+                               + params_dict['username']
+                               + '\n')
+                log_file.close()
+            except GithubException:
+                print('ERROR')
+                log_file = open(config.get('log_file'), 'a')
+                log_file.write(str(datetime.datetime.now())
+                               + ' | Error while setting repository '
+                               + params_dict['repoprivacy'].split(',')[0]
+                               + ' to '
+                               + ('private' if params_dict['repoprivacy'].split(',')[1] == 'T' else 'public')
+                               + ' for user '
+                               + params_dict['username']
+                               + '\n')
+                log_file.close()
+                exit(11)
         if params_dict['findinrepo']:
-            print()
-            githubapi.get_repository_files_by_type(instance,
-                                                   params_dict['findinrepo'].split(',')[0],
-                                                   params_dict['findinrepo'].split(',')[1])
-        if params_dict['repo'] and params_dict['createfile']:
-            print()
-            githubapi.create_new_repo_file_from_cmd(instance,
-                                                    params_dict['repo'],
-                                                    params_dict['createfile'],
-                                                    params_dict['content'])
-            print('Successfully create file '
-                  + params_dict['createfile']
-                  + ' in repo '
-                  + params_dict['repo']
-                  + '\n')
-        if params_dict['repo'] and params_dict['loadfile']:
-            print()
-            githubapi.create_new_repo_file_from_file(instance,
-                                                     params_dict['repo'],
-                                                     params_dict['loadfile'],
-                                                     params_dict['path'])
-            print('Successfully loaded file '
-                  + params_dict['loadfile']
-                  + ' in repo '
-                  + params_dict['repo']
-                  + '\n')
+            try:
+                print()
+                githubapi.get_repository_files_by_type(instance,
+                                                       params_dict['findinrepo'].split(',')[0],
+                                                       params_dict['findinrepo'].split(',')[1])
+                log_file = open(config.get('log_file'), 'a')
+                log_file.write(str(datetime.datetime.now())
+                               + ' | Found '
+                               + params_dict['findinrepo'].split(',')[1]
+                               + ' files in repository '
+                               + params_dict['findinrepo'].split(',')[0]
+                               + ' for user '
+                               + params_dict['username']
+                               + '\n')
+                log_file.close()
+            except GithubException:
+                print('ERROR')
+                log_file = open(config.get('log_file'), 'a')
+                log_file.write(str(datetime.datetime.now())
+                               + ' | Error while searching '
+                               + params_dict['findinrepo'].split(',')[1]
+                               + ' files in repository '
+                               + params_dict['findinrepo'].split(',')[0]
+                               + ' for user '
+                               + params_dict['username']
+                               + '\n')
+                log_file.close()
+                exit(11)
+        if params_dict['repo'] and params_dict['createfile'] and params_dict['content']:
+            try:
+                print()
+                githubapi.create_new_repo_file_from_cmd(instance,
+                                                        params_dict['repo'],
+                                                        params_dict['createfile'],
+                                                        params_dict['content'])
+                print('Successfully create file '
+                      + params_dict['createfile']
+                      + ' in repo '
+                      + params_dict['repo']
+                      + '\n')
+                log_file = open(config.get('log_file'), 'a')
+                log_file.write(str(datetime.datetime.now())
+                               + ' | Created file '
+                               + params_dict['createfile']
+                               + ' in repository '
+                               + params_dict['repo']
+                               + ' for user '
+                               + params_dict['username']
+                               + '\n')
+                log_file.close()
+            except GithubException:
+                print('ERROR')
+                log_file = open(config.get('log_file'), 'a')
+                log_file.write(str(datetime.datetime.now())
+                               + ' | Error while creating file '
+                               + params_dict['createfile']
+                               + ' in repository '
+                               + params_dict['repo']
+                               + ' for user '
+                               + params_dict['username']
+                               + '\n')
+                log_file.close()
+                exit(11)
+        if params_dict['repo'] and params_dict['loadfile'] and params_dict['path']:
+            try:
+                print()
+                githubapi.create_new_repo_file_from_file(instance,
+                                                         params_dict['repo'],
+                                                         params_dict['loadfile'],
+                                                         params_dict['path'])
+                print('Successfully loaded file '
+                      + params_dict['loadfile']
+                      + ' in repo '
+                      + params_dict['repo']
+                      + '\n')
+                log_file = open(config.get('log_file'), 'a')
+                log_file.write(str(datetime.datetime.now())
+                               + ' | Loaded file '
+                               + params_dict['loadfile']
+                               + ' into repository '
+                               + params_dict['repo']
+                               + ' for user '
+                               + params_dict['username']
+                               + '\n')
+                log_file.close()
+            except GithubException:
+                print('ERROR')
+                log_file = open(config.get('log_file'), 'a')
+                log_file.write(str(datetime.datetime.now())
+                               + ' | Error while loading file '
+                               + params_dict['loadfile']
+                               + ' into repository '
+                               + params_dict['repo']
+                               + ' for user '
+                               + params_dict['username']
+                               + '\n')
+                log_file.close()
+                exit(11)
         if params_dict['repo'] and params_dict['deletefile']:
-            print()
-            githubapi.delete_file_from_repo(instance,
-                                            params_dict['repo'],
-                                            params_dict['deletefile'])
-            print('Successfully deleted file '
-                  + params_dict['deletefile']
-                  + ' from repo '
-                  + params_dict['repo']
-                  + '\n')
+            try:
+                print()
+                githubapi.delete_file_from_repo(instance,
+                                                params_dict['repo'],
+                                                params_dict['deletefile'])
+                print('Successfully deleted file '
+                      + params_dict['deletefile']
+                      + ' from repo '
+                      + params_dict['repo']
+                      + '\n')
+                log_file = open(config.get('log_file'), 'a')
+                log_file.write(str(datetime.datetime.now())
+                               + ' | Deleted file '
+                               + params_dict['deletefile']
+                               + ' from repository '
+                               + params_dict['repo']
+                               + ' for user '
+                               + params_dict['username']
+                               + '\n')
+                log_file.close()
+            except GithubException:
+                print('ERROR')
+                log_file = open(config.get('log_file'), 'a')
+                log_file.write(str(datetime.datetime.now())
+                               + ' | Error while deleting file '
+                               + params_dict['deletefile']
+                               + ' from repository '
+                               + params_dict['repo']
+                               + ' for user '
+                               + params_dict['username']
+                               + '\n')
+                log_file.close()
+                exit(11)
 
     except GithubException:
         log_file = open(config.get('log_file'), 'a')
@@ -199,6 +427,7 @@ def main(username,
                        + '\n')
         log_file.close()
         print('Authorisation error! Check username/password.')
+        exit(11)
 
 
 if __name__ == "__main__":

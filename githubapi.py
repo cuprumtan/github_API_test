@@ -10,8 +10,9 @@ def count_all_user_repositories(github_instance, private=False, languages=False)
     github_repositories = github_instance.search_repositories(query='user:' + github_instance.get_user().login)
     print('===== USER '
           + github_instance.get_user().login
-          + ', TOTAL'
-          + ', ' + str(github_repositories.totalCount))
+          + ', TOTAL '
+          + str(github_repositories.totalCount)
+          + ' repos')
 
 
 def get_all_user_repositories(github_instance, private=False, languages=False):
