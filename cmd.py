@@ -18,14 +18,17 @@ fernet = Fernet(permanent_key)
 @click.option('-P', '--password', required=False, help='GitHub password')
 # repo level
 # get_all_user_repositories
-@click.option('-r', '--repolist', required=False, is_flag=True, help='Show current user repositories')
+@click.option('-R', '--repolist', required=False, is_flag=True, help='Show current user repositories')
 @click.option('--privacy', required=False, is_flag=True, help='Show repositories privacy')
 @click.option('--languages', required=False, is_flag=True, help='Show repositories languages')
 # create_new_github_repository
 @click.option('-C', '--createrepo', required=False, help='Create new repository')
 # delete_github_repository
 @click.option('-D', '--deleterepo', required=False, help='Delete new repository')
-def main(username, password, repolist, privacy, languages, createrepo, deleterepo):
+# get_repository_contents
+@click.option('-T', '--repocontents', required=False, help='Show repository contents')
+@click.option('--recursively', required=False, is_flag=True, help='Show repository contents recursively')
+def main(username, password, repolist, privacy, languages, createrepo, deleterepo, repocontents, recursively):
     params_dict = {
         'username': username,
         'password': password,
@@ -33,7 +36,9 @@ def main(username, password, repolist, privacy, languages, createrepo, deleterep
         'privacy': privacy,
         'languages': languages,
         'createrepo': createrepo,
-        'deleterepo': deleterepo
+        'deleterepo': deleterepo,
+        'repocontents': repocontents,
+        'recursively': recursively
     }
 
     # check credentials file. Use creds from it if exists, else exit
@@ -81,6 +86,9 @@ def main(username, password, repolist, privacy, languages, createrepo, deleterep
             print('Successfully deleted repo '
                   + params_dict['deleterepo']
                   + '\n')
+        if params_dict['repocontents']:
+            print()
+            githubapi.get_repository_contents(instance, params_dict['repocontents'], params_dict['recursively'])
 
 
     except GithubException:
