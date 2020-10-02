@@ -21,13 +21,19 @@ fernet = Fernet(permanent_key)
 @click.option('-r', '--repolist', required=False, is_flag=True, help='Show current user repositories')
 @click.option('--privacy', required=False, is_flag=True, help='Show repositories privacy')
 @click.option('--languages', required=False, is_flag=True, help='Show repositories languages')
-def main(username, password, repolist, privacy, languages):
+# create_new_github_repository
+@click.option('-C', '--createrepo', required=False, help='Create new repository')
+# delete_github_repository
+@click.option('-D', '--deleterepo', required=False, help='Delete new repository')
+def main(username, password, repolist, privacy, languages, createrepo, deleterepo):
     params_dict = {
         'username': username,
         'password': password,
         'repolist': repolist,
         'privacy': privacy,
-        'languages': languages
+        'languages': languages,
+        'createrepo': createrepo,
+        'deleterepo': deleterepo
     }
 
     # check credentials file. Use creds from it if exists, else exit
@@ -63,6 +69,19 @@ def main(username, password, repolist, privacy, languages):
         if params_dict['repolist']:
             print()
             githubapi.get_all_user_repositories(instance, params_dict['privacy'], params_dict['languages'])
+        if params_dict['createrepo']:
+            print()
+            githubapi.create_new_github_repository(instance, params_dict['createrepo'])
+            print('Successfully created new repo '
+                  + params_dict['createrepo']
+                  + '\n')
+        if params_dict['deleterepo']:
+            print()
+            githubapi.delete_github_repository(instance, params_dict['deleterepo'])
+            print('Successfully deleted repo '
+                  + params_dict['deleterepo']
+                  + '\n')
+
 
     except GithubException:
         log_file = open(config.get('log_file'), 'a')
