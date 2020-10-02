@@ -29,7 +29,11 @@ fernet = Fernet(permanent_key)
 @click.option('-T', '--repocontents', required=False, help='Show repository contents')
 @click.option('--recursively', required=False, is_flag=True, help='Show repository contents recursively')
 # edit_repository_name
-@click.option('-R', '--renamerepo', required=False, help='Rename repository [REPO,NEW_NAME]')
+@click.option('-R', '--renamerepo', required=False, help='Rename repository. Usage: -R REPO,NEW_NAME')
+# edit_repository_privacy
+@click.option('-P', '--repoprivacy', required=False, help='Edit repository privacy. '
+                                                          + 'Usage: -P REPO,PRIVACY where PRIVACY = [T|F]. '
+                                                          + 'T for private, F for public.')
 def main(username,
          password,
          repolist,
@@ -39,7 +43,8 @@ def main(username,
          deleterepo,
          repocontents,
          recursively,
-         renamerepo):
+         renamerepo,
+         repoprivacy):
     params_dict = {
         'username': username,
         'password': password,
@@ -50,7 +55,8 @@ def main(username,
         'deleterepo': deleterepo,
         'repocontents': repocontents,
         'recursively': recursively,
-        'renamerepo': renamerepo
+        'renamerepo': renamerepo,
+        'repoprivacy': repoprivacy
     }
 
     # check credentials file. Use creds from it if exists, else exit
@@ -111,7 +117,16 @@ def main(username,
                   + ' to '
                   + params_dict['renamerepo'].split(',')[1]
                   + '\n')
-
+        if params_dict['repoprivacy']:
+            print()
+            githubapi.edit_repository_privacy(instance,
+                                              params_dict['repoprivacy'].split(',')[0],
+                                              True if params_dict['repoprivacy'].split(',')[1] == 'T' else False)
+            print('Successfully made repo '
+                  + params_dict['repoprivacy'].split(',')[0]
+                  + ' '
+                  + 'private' if params_dict['repoprivacy'].split(',')[1] == 'T' else 'public'
+                  + '\n')
 
     except GithubException:
         log_file = open(config.get('log_file'), 'a')
