@@ -18,7 +18,7 @@ fernet = Fernet(permanent_key)
 @click.option('-P', '--password', required=False, help='GitHub password')
 # repo level
 # get_all_user_repositories
-@click.option('-R', '--repolist', required=False, is_flag=True, help='Show current user repositories')
+@click.option('-L', '--repolist', required=False, is_flag=True, help='Show current user repositories')
 @click.option('--privacy', required=False, is_flag=True, help='Show repositories privacy')
 @click.option('--languages', required=False, is_flag=True, help='Show repositories languages')
 # create_new_github_repository
@@ -28,7 +28,18 @@ fernet = Fernet(permanent_key)
 # get_repository_contents
 @click.option('-T', '--repocontents', required=False, help='Show repository contents')
 @click.option('--recursively', required=False, is_flag=True, help='Show repository contents recursively')
-def main(username, password, repolist, privacy, languages, createrepo, deleterepo, repocontents, recursively):
+# edit_repository_name
+@click.option('-R', '--renamerepo', required=False, help='Rename repository [REPO,NEW_NAME]')
+def main(username,
+         password,
+         repolist,
+         privacy,
+         languages,
+         createrepo,
+         deleterepo,
+         repocontents,
+         recursively,
+         renamerepo):
     params_dict = {
         'username': username,
         'password': password,
@@ -38,7 +49,8 @@ def main(username, password, repolist, privacy, languages, createrepo, deleterep
         'createrepo': createrepo,
         'deleterepo': deleterepo,
         'repocontents': repocontents,
-        'recursively': recursively
+        'recursively': recursively,
+        'renamerepo': renamerepo
     }
 
     # check credentials file. Use creds from it if exists, else exit
@@ -89,6 +101,16 @@ def main(username, password, repolist, privacy, languages, createrepo, deleterep
         if params_dict['repocontents']:
             print()
             githubapi.get_repository_contents(instance, params_dict['repocontents'], params_dict['recursively'])
+        if params_dict['renamerepo']:
+            print()
+            githubapi.edit_repository_name(instance,
+                                           params_dict['renamerepo'].split(',')[0],
+                                           params_dict['renamerepo'].split(',')[1])
+            print('Successfully renamed repo '
+                  + params_dict['renamerepo'].split(',')[0]
+                  + ' to '
+                  + params_dict['renamerepo'].split(',')[1]
+                  + '\n')
 
 
     except GithubException:
